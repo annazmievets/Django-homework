@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History</title>
+</head>
+<body>
+    {% include 'menu.html' %}
+    <h1>{{ name }}</h1>
+    <h2>История вычислений</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Выражение</th>
+                <th>Результат</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in history %}
+            <tr>
+                <td>{{ entry.expression }}</td>
+                <td>{{ entry.result }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
