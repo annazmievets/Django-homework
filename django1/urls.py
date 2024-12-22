@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from first.views import index_page, time_page, calc_page, expression_page, history_page
+from first.views import index_page, time_page, calc_page, expression_page, history_page, delete_page, clear_page, new_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +25,7 @@ urlpatterns = [
     path('calc/', calc_page, name='calc'),
     path('expression/', expression_page, name='expression'),
     path('history/', history_page, name='history'),
+    path('delete/', delete_page, name='delete'),
+    path('clear/', clear_page, name='clear'),
+    path('new/', new_page, name='new'),
 ]
