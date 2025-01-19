@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History of analysis</title>
+</head>
+<body>
+    {% include 'menu.html' %}
+    <h1>История анализа строк</h1>
+<ul>
+    {% for item in history %}
+        <li>{{ item.created_at }} - "{{ item.input_string }}" (Слов: {{ item.word_count }}, Чисел: {{ item.number_count }})</li>
+    {% endfor %}
+</ul>
+<a href="/">На главную</a>
+</body>
+</html>

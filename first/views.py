@@ -1,13 +1,18 @@
 from django.shortcuts import render
 from datetime import datetime
 import random
-from .models import Expression
+from .models import Expression, StrAnalysis
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+import re
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
 
 def index_page(request):
     context = {
         'name': 'Курс "Промышленное программирование"',
         'author': 'Аня Змиевец',
-        'page_count': 8,
+        'page_count': 11,
     }
     return render(request, 'index.html', context)
 
@@ -128,3 +133,60 @@ def new_page(request):
             'message': message
         }
         return render(request, 'new.html', context)
+
+def analyze_string(input_string):
+    words = re.findall(r'[a-zA-Zа-яА-ЯёЁ0-9]+', input_string)
+    numbers = [word for word in words if word.isdigit()]
+    return words, numbers
+@login_required
+def str2words_page(request):
+
+    if request.method == 'POST':
+        input_string = request.POST.get('input_string', '')
+        words, numbers = analyze_string(input_string)
+
+        StrAnalysis.objects.create(
+            user=request.user,
+            input_string=input_string,
+            word_count=len(words),
+            number_count=len(numbers),
+        )
+
+        context = {
+            'input_string': input_string,
+            'words': words,
+            'numbers': numbers,
+            'word_count': len(words),
+            'number_count': len(numbers),
+        }
+        return render(request, 'str2words.html', context)
+
+    return render(request, 'str2words.html')
+
+def str_history_page(request):
+    history = StrAnalysis.objects.filter(user=request.user)
+    context = {
+        'history': history
+    }
+    return render(request, 'strhistory.html', context)
+
+def login_page(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            return render(request, 'login.html', {'error': 'Неверный логин или пароль'})
+
+    return render(request, 'login.html')
+
+def logout_page(request):
+    logout(request)
+    return redirect('/')
+
+if not User.objects.filter(username='vasya').exists():
+    User.objects.create_user(username='vasya', password='promprog')
+    print("Пользователь vasya создан.")
